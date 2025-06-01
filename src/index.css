@@ -1,0 +1,303 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    /* Thème clair */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 217 91% 45%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Palette d'entreprise */
+    --corporate-blue-50: 240 100% 98%;
+    --corporate-blue-100: 240 84% 94%;
+    --corporate-blue-500: 217 91% 45%;
+    --corporate-blue-600: 217 91% 35%;
+    --corporate-blue-700: 217 91% 25%;
+    --corporate-blue-900: 217 91% 15%;
+    
+    --corporate-green-50: 142 76% 96%;
+    --corporate-green-100: 142 76% 91%;
+    --corporate-green-500: 142 71% 45%;
+    --corporate-green-600: 142 71% 35%;
+    
+    --corporate-orange-50: 25 95% 96%;
+    --corporate-orange-100: 25 95% 91%;
+    --corporate-orange-500: 25 95% 53%;
+    --corporate-orange-600: 25 95% 43%;
+    
+    --corporate-gray-50: 220 14% 96%;
+    --corporate-gray-100: 220 14% 91%;
+    --corporate-gray-200: 220 13% 86%;
+    --corporate-gray-300: 220 9% 75%;
+    --corporate-gray-400: 220 8% 64%;
+    --corporate-gray-500: 220 9% 46%;
+    --corporate-gray-600: 220 14% 37%;
+    --corporate-gray-700: 220 39% 11%;
+    --corporate-gray-800: 220 63% 6%;
+    --corporate-gray-900: 220 100% 3%;
+  }
+
+  .dark {
+    /* Thème sombre */
+    --background: 220 100% 3%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 63% 6%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 63% 6%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 45%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 39% 11%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 220 39% 11%;
+    --muted-foreground: 220 8% 64%;
+
+    --accent: 220 39% 11%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 220 39% 11%;
+    --input: 220 39% 11%;
+    --ring: 217 91% 45%;
+
+    /* Sidebar sombre */
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border transition-colors duration-300;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Système de typographie */
+  .text-display-lg {
+    @apply text-4xl font-bold tracking-tight leading-none;
+  }
+  
+  .text-display-md {
+    @apply text-3xl font-bold tracking-tight leading-tight;
+  }
+  
+  .text-display-sm {
+    @apply text-2xl font-semibold tracking-tight leading-tight;
+  }
+  
+  .text-headline-lg {
+    @apply text-xl font-semibold leading-tight;
+  }
+  
+  .text-headline-md {
+    @apply text-lg font-semibold leading-tight;
+  }
+  
+  .text-headline-sm {
+    @apply text-base font-semibold leading-tight;
+  }
+  
+  .text-body-lg {
+    @apply text-base font-normal leading-relaxed;
+  }
+  
+  .text-body-md {
+    @apply text-sm font-normal leading-relaxed;
+  }
+  
+  .text-body-sm {
+    @apply text-xs font-normal leading-relaxed;
+  }
+  
+  .text-caption {
+    @apply text-xs font-medium leading-tight tracking-wide uppercase;
+  }
+  
+  .text-overline {
+    @apply text-xs font-semibold leading-tight tracking-wider uppercase;
+  }
+
+  /* Animations améliorées */
+  .animate-fade-in {
+    animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  .hover-lift {
+    @apply transition-all duration-300 ease-out hover:shadow-xl hover:-translate-y-1;
+  }
+  
+  .hover-glow {
+    @apply transition-all duration-300 ease-out hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-blue-400/20;
+  }
+
+  /* Styles premium adaptés au thème */
+  .premium-card {
+    @apply bg-white dark:bg-corporate-gray-800 border border-corporate-gray-200 dark:border-corporate-gray-700 shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  .premium-text {
+    @apply text-corporate-gray-900 dark:text-white transition-colors duration-300;
+  }
+
+  .premium-text-muted {
+    @apply text-corporate-gray-600 dark:text-corporate-gray-400 transition-colors duration-300;
+  }
+}
+
+@layer utilities {
+  /* Utilitaires de couleur */
+  .bg-corporate-blue-50 { background-color: hsl(var(--corporate-blue-50)); }
+  .bg-corporate-blue-100 { background-color: hsl(var(--corporate-blue-100)); }
+  .bg-corporate-blue-500 { background-color: hsl(var(--corporate-blue-500)); }
+  .bg-corporate-blue-600 { background-color: hsl(var(--corporate-blue-600)); }
+  .bg-corporate-blue-700 { background-color: hsl(var(--corporate-blue-700)); }
+  .bg-corporate-blue-900 { background-color: hsl(var(--corporate-blue-900)); }
+  
+  .bg-corporate-green-50 { background-color: hsl(var(--corporate-green-50)); }
+  .bg-corporate-green-100 { background-color: hsl(var(--corporate-green-100)); }
+  .bg-corporate-green-500 { background-color: hsl(var(--corporate-green-500)); }
+  .bg-corporate-green-600 { background-color: hsl(var(--corporate-green-600)); }
+  
+  .bg-corporate-orange-50 { background-color: hsl(var(--corporate-orange-50)); }
+  .bg-corporate-orange-100 { background-color: hsl(var(--corporate-orange-100)); }
+  .bg-corporate-orange-500 { background-color: hsl(var(--corporate-orange-500)); }
+  .bg-corporate-orange-600 { background-color: hsl(var(--corporate-orange-600)); }
+  
+  .bg-corporate-gray-50 { background-color: hsl(var(--corporate-gray-50)); }
+  .bg-corporate-gray-100 { background-color: hsl(var(--corporate-gray-100)); }
+  .bg-corporate-gray-200 { background-color: hsl(var(--corporate-gray-200)); }
+  .bg-corporate-gray-300 { background-color: hsl(var(--corporate-gray-300)); }
+  .bg-corporate-gray-400 { background-color: hsl(var(--corporate-gray-400)); }
+  .bg-corporate-gray-500 { background-color: hsl(var(--corporate-gray-500)); }
+  .bg-corporate-gray-600 { background-color: hsl(var(--corporate-gray-600)); }
+  .bg-corporate-gray-700 { background-color: hsl(var(--corporate-gray-700)); }
+  .bg-corporate-gray-800 { background-color: hsl(var(--corporate-gray-800)); }
+  .bg-corporate-gray-900 { background-color: hsl(var(--corporate-gray-900)); }
+  
+  .text-corporate-blue-300 { color: hsl(240 84% 85%); }
+  .text-corporate-blue-400 { color: hsl(240 84% 75%); }
+  .text-corporate-blue-500 { color: hsl(var(--corporate-blue-500)); }
+  .text-corporate-blue-600 { color: hsl(var(--corporate-blue-600)); }
+  .text-corporate-blue-700 { color: hsl(var(--corporate-blue-700)); }
+  
+  .text-corporate-green-500 { color: hsl(var(--corporate-green-500)); }
+  .text-corporate-green-600 { color: hsl(var(--corporate-green-600)); }
+  
+  .text-corporate-orange-500 { color: hsl(var(--corporate-orange-500)); }
+  .text-corporate-orange-600 { color: hsl(var(--corporate-orange-600)); }
+  
+  .text-corporate-gray-400 { color: hsl(var(--corporate-gray-400)); }
+  .text-corporate-gray-500 { color: hsl(var(--corporate-gray-500)); }
+  .text-corporate-gray-600 { color: hsl(var(--corporate-gray-600)); }
+  .text-corporate-gray-700 { color: hsl(var(--corporate-gray-700)); }
+  .text-corporate-gray-800 { color: hsl(var(--corporate-gray-800)); }
+  .text-corporate-gray-900 { color: hsl(var(--corporate-gray-900)); }
+  
+  .border-corporate-blue-100 { border-color: hsl(var(--corporate-blue-100)); }
+  .border-corporate-blue-200 { border-color: hsl(var(--corporate-blue-200)); }
+  .border-corporate-green-100 { border-color: hsl(var(--corporate-green-100)); }
+  .border-corporate-orange-100 { border-color: hsl(var(--corporate-orange-100)); }
+  .border-corporate-gray-100 { border-color: hsl(var(--corporate-gray-100)); }
+  .border-corporate-gray-200 { border-color: hsl(var(--corporate-gray-200)); }
+  .border-corporate-gray-300 { border-color: hsl(var(--corporate-gray-300)); }
+  .border-corporate-gray-700 { border-color: hsl(var(--corporate-gray-700)); }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
