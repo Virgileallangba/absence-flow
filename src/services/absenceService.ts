@@ -20,10 +20,10 @@ export const absenceService = {
   // Récupérer les absences en attente pour un manager
   async getPendingAbsences() {
     const { data, error } = await supabase
-      .from('absences')
+      .from('leave_requests')
       .select(`
         *,
-        profiles!absences_employee_id_fkey (
+        profiles!leave_requests_user_id_fkey (
           id,
           full_name,
           email,
@@ -39,9 +39,17 @@ export const absenceService = {
     }
 
     // Transformer les données pour correspondre à l'interface attendue
-    return data?.map(absence => ({
-      ...absence,
-      employee: absence.profiles || null
+    return data?.map(request => ({
+      id: request.id,
+      employee_id: request.user_id,
+      start_date: request.start_date,
+      end_date: request.end_date,
+      type: request.leave_type_id || 'CP',
+      status: request.status,
+      reason: request.reason,
+      created_at: request.created_at,
+      updated_at: request.updated_at,
+      employee: request.profiles || null
     })) || [];
   },
 
