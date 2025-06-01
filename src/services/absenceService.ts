@@ -28,6 +28,11 @@ export const absenceService = {
           full_name,
           email,
           avatar_url
+        ),
+        leave_types!leave_requests_leave_type_id_fkey (
+          id,
+          name,
+          color
         )
       `)
       .eq('status', 'pending')
@@ -44,7 +49,7 @@ export const absenceService = {
       employee_id: request.user_id,
       start_date: request.start_date,
       end_date: request.end_date,
-      type: request.leave_type_id || 'CP',
+      type: request.leave_types?.name || 'CP',
       status: request.status,
       reason: request.reason,
       created_at: request.created_at,
