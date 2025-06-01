@@ -19,25 +19,37 @@ export const absenceService = {
 
   // Récupérer les absences en attente pour un manager
   async getPendingAbsences() {
-    const { data, error } = await supabase
+    // D'abord, récupérer les absences
+    const { data: absences, error: absencesError } = await supabase
       .from('absences')
-      .select(`
-        *,
-        employee:employee_id (
-          id,
-          full_name,
-          email,
-          avatar_url
-        )
-      `)
+      .select('*')
       .eq('status', 'pending')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error("absenceService.getPendingAbsences error:", error);
-      throw error;
+    if (absencesError) {
+      console.error("absenceService.getPendingAbsences error:", absencesError);
+      throw absencesError;
     }
-    return data;
+
+    if (!absences) return [];
+
+    // Ensuite, récupérer les informations des employés
+    const employeeIds = absences.map(absence => absence.employee_id);
+    const { data: employees, error: employeesError } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, avatar_url')
+      .in('id', employeeIds);
+
+    if (employeesError) {
+      console.error("absenceService.getPendingAbsences employees error:", employeesError);
+      throw employeesError;
+    }
+
+    // Combiner les données
+    return absences.map(absence => ({
+      ...absence,
+      employee: employees?.find(emp => emp.id === absence.employee_id) || null
+    }));
   },
 
   // Créer une nouvelle demande d'absence
