@@ -18,7 +18,7 @@ import { useToast } from "@/components/ui/use-toast";
 import type { Absence } from "@/lib/supabase";
 
 interface PendingRequestData extends Absence {
-  employees: {
+  employee: {
     id: string;
     full_name: string | null;
     email: string | null;
@@ -49,9 +49,9 @@ const ManagerDashboard = () => {
         const data: PendingRequestData[] | null = await absenceService.getPendingAbsences();
         const formattedRequests: FormattedPendingRequest[] = data?.map((req: PendingRequestData) => ({
           id: req.id,
-          employee: req.employees?.full_name || 'N/A',
-          avatar: req.employees?.avatar_url || '/placeholder.svg',
-          initials: req.employees?.full_name ? req.employees.full_name.split(' ').map((n: string) => n[0]).join('') : 'N/A',
+          employee: req.employee?.full_name || 'N/A',
+          avatar: req.employee?.avatar_url || '/placeholder.svg',
+          initials: req.employee?.full_name ? req.employee.full_name.split(' ').map((n: string) => n[0]).join('') : 'N/A',
           dates: `${new Date(req.start_date).toLocaleDateString('fr-FR')} - ${new Date(req.end_date).toLocaleDateString('fr-FR')}`,
           type: req.type || 'N/A',
           days: Math.ceil((new Date(req.end_date).getTime() - new Date(req.start_date).getTime()) / (1000 * 60 * 60 * 24)) + 1,

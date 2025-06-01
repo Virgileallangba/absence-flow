@@ -23,7 +23,7 @@ export const absenceService = {
       .from('absences')
       .select(`
         *,
-        profiles (
+        employee:employee_id (
           id,
           full_name,
           email,
