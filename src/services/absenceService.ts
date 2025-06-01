@@ -35,20 +35,20 @@ export const absenceService = {
 
     // Ensuite, récupérer les informations des employés
     const employeeIds = absences.map(absence => absence.employee_id);
-    const { data: employees, error: employeesError } = await supabase
+    const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
       .select('id, full_name, email, avatar_url')
       .in('id', employeeIds);
 
-    if (employeesError) {
-      console.error("absenceService.getPendingAbsences employees error:", employeesError);
-      throw employeesError;
+    if (profilesError) {
+      console.error("absenceService.getPendingAbsences profiles error:", profilesError);
+      throw profilesError;
     }
 
     // Combiner les données
     return absences.map(absence => ({
       ...absence,
-      employee: employees?.find(emp => emp.id === absence.employee_id) || null
+      employee: profiles?.find(profile => profile.id === absence.employee_id) || null
     }));
   },
 
