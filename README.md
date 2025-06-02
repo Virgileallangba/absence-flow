@@ -1,73 +1,119 @@
-# Welcome to your Lovable project
+# AbsenceFlow – Gestion des absences avec Supabase & Vercel
 
-## Project info
+## Présentation
 
-**URL**: https://lovable.dev/projects/51cb8baa-9c4a-48f5-864d-b26478bb4486
+AbsenceFlow est une application moderne de gestion des absences, construite avec React, Vite, TypeScript, shadcn-ui, Tailwind CSS et Supabase.
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## Installation & Lancement
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/51cb8baa-9c4a-48f5-864d-b26478bb4486) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+1. **Cloner le dépôt**
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
+npm install
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. **Variables d'environnement**
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+Créez un fichier `.env` ou configurez sur Vercel :
+```
+VITE_SUPABASE_URL=...   # URL de votre projet Supabase
+VITE_SUPABASE_ANON_KEY=... # Clé anonyme Supabase
+```
+
+3. **Lancer en développement**
+```sh
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Déploiement sur Vercel
 
-**Use GitHub Codespaces**
+- Connectez votre dépôt à Vercel
+- Ajoutez les variables d'environnement dans le dashboard Vercel
+- Déployez !
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
+## Intégration Supabase
 
-This project is built with:
+### a. Appliquer les migrations
+Dans le dashboard Supabase, ouvrez l'onglet **SQL Editor** et copiez le contenu de :
+- `supabase/migrations/20240320000000_add_new_tables.sql`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Exécutez le script pour créer les tables et politiques de sécurité.
 
-## How can I deploy this project?
+### b. Insérer les données de test
+Dans le même éditeur SQL, copiez le contenu de :
+- `supabase/seed.sql`
 
-Simply open [Lovable](https://lovable.dev/projects/51cb8baa-9c4a-48f5-864d-b26478bb4486) and click on Share -> Publish.
+Exécutez pour insérer des exemples de données.
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## Utilisation des hooks personnalisés
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Absences (employé)
+```tsx
+import { useAbsences } from '@/hooks/useAbsences';
+const { absences, addAbsence, updateAbsence, deleteAbsence, loading, error } = useAbsences(employeeId);
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Équipe
+```tsx
+import { useTeam } from '@/hooks/useTeam';
+const { team, wellbeing, updateTeamMember, updateWellbeing, loading } = useTeam(departmentId);
+```
+
+### Manager
+```tsx
+import { useManager } from '@/hooks/useManager';
+const { badges, ranking, updateBadge, updateRanking, loading } = useManager(managerId);
+```
+
+---
+
+## Utilitaires disponibles
+
+- `calculateDaysBetween(start, end)` : nombre de jours entre deux dates
+- `formatDate(date)` : format français
+- `calculateRemainingLeave(employeeId, year)` : solde de congés
+- `checkAbsenceOverlap(...)` : vérifie le chevauchement
+- `sendNotification(...)` : envoie une notification
+
+---
+
+## Bonnes pratiques
+- **RLS** : Testez les accès selon les rôles (employé, manager, etc.)
+- **Sécurité** : N'utilisez jamais la clé service côté front
+- **Types** : Utilisez les types TypeScript fournis dans `src/lib/supabase.ts`
+- **Migrations** : Pour la prod, utilisez la CLI Supabase ou GitHub Actions
+
+---
+
+## Technologies principales
+- React, Vite, TypeScript, Tailwind CSS, shadcn-ui
+- Supabase (Postgres, Auth, Storage)
+- Vercel (déploiement)
+
+---
+
+## Liens utiles
+- [Supabase](https://supabase.com/)
+- [Vercel](https://vercel.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
+
+---
+
+## Édition et contribution
+
+- Modifiez le code localement ou via Lovable
+- Utilisez `npm run lint` pour vérifier la qualité du code
+- Proposez vos améliorations via Pull Request
+
+---
+
+Pour toute question, ouvrez une issue ou contactez l'équipe !

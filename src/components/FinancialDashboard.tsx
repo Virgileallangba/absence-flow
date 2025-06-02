@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface CostAnalysis {
   id: string;
@@ -37,6 +38,18 @@ interface AbsenceCost {
 
 const FinancialDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [absenceCosts, setAbsenceCosts] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchAbsenceCosts = async () => {
+      // Exemple : charger toutes les absences et profils associés
+      const { data, error } = await supabase
+        .from('absences')
+        .select('*, profiles(full_name)');
+      if (!error && data) setAbsenceCosts(data);
+    };
+    fetchAbsenceCosts();
+  }, []);
 
   // Analyse des coûts
   const costAnalysis: CostAnalysis[] = [
@@ -97,28 +110,6 @@ const FinancialDashboard = () => {
       potentialSavings: 3000,
       implementation: "Mise à jour de la politique de congés",
       impact: "low"
-    }
-  ];
-
-  // Coûts détaillés des absences
-  const absenceCosts: AbsenceCost[] = [
-    {
-      id: "a1",
-      employee: "Marie Martin",
-      type: "CP",
-      dates: "20-24 Déc 2024",
-      directCost: -1200,
-      indirectCost: -300,
-      totalCost: -1500
-    },
-    {
-      id: "a2",
-      employee: "Jean Dupont",
-      type: "Maladie",
-      dates: "15-19 Déc 2024",
-      directCost: -1000,
-      indirectCost: -500,
-      totalCost: -1500
     }
   ];
 

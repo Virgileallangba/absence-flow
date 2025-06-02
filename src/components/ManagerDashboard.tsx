@@ -16,6 +16,7 @@ import { absenceService } from "@/services/absenceService";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import type { Absence } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 interface PendingRequestData extends Absence {
   employee: {
@@ -38,15 +39,26 @@ interface FormattedPendingRequest {
   submitted: string;
 }
 
+interface UpcomingAbsence {
+  id: string;
+  start_date: string;
+  end_date: string;
+  type: string;
+  profiles: {
+    full_name: string;
+  };
+}
+
 const ManagerDashboard = () => {
   const [pendingRequests, setPendingRequests] = useState<FormattedPendingRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const [upcomingAbsences, setUpcomingAbsences] = useState<UpcomingAbsence[]>([]);
 
   useEffect(() => {
     const fetchPendingRequests = async () => {
       try {
-        const data: PendingRequestData[] | null = await absenceService.getPendingAbsences();
+        const data = (await absenceService.getPendingAbsences()) as PendingRequestData[] | null;
         const formattedRequests: FormattedPendingRequest[] = data?.map((req: PendingRequestData) => ({
           id: req.id,
           employee: req.employee?.full_name || 'N/A',
@@ -72,6 +84,19 @@ const ManagerDashboard = () => {
     };
 
     fetchPendingRequests();
+
+    const fetchUpcomingAbsences = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('absences')
+          .select('*, profiles(full_name)')
+          .gte('start_date', new Date().toISOString().slice(0, 10));
+        if (!error && data) setUpcomingAbsences(data);
+      } catch (e) {
+        // no-op
+      }
+    };
+    fetchUpcomingAbsences();
   }, [toast]);
 
   const teamStats = [
@@ -79,12 +104,6 @@ const ManagerDashboard = () => {
     { label: "Demandes en attente", value: pendingRequests.length, icon: Clock, color: "text-yellow-600 dark:text-yellow-400" },
     { label: "Approuvées ce mois", value: 12, icon: CheckCircle, color: "text-green-600 dark:text-green-400" },
     { label: "Taux d'absence", value: "12%", icon: Users, color: "text-purple-600 dark:text-purple-400" },
-  ];
-
-  const upcomingAbsences = [
-    { employee: "Jean Dupont", dates: "15-19 Déc", type: "CP" },
-    { employee: "Ana Garcia", dates: "22-31 Déc", type: "CP" },
-    { employee: "Tom Wilson", dates: "2-5 Jan", type: "RTT" },
   ];
 
   return (
@@ -217,8 +236,8 @@ const ManagerDashboard = () => {
                   {upcomingAbsences.map((absence, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-corporate-blue-50 dark:bg-corporate-blue-900/20 rounded-lg">
                       <div>
-                        <p className="font-medium text-corporate-gray-900 dark:text-white">{absence.employee}</p>
-                        <p className="text-sm text-corporate-gray-600 dark:text-corporate-gray-400">{absence.dates}</p>
+                        <p className="font-medium text-corporate-gray-900 dark:text-white">{absence.profiles.full_name}</p>
+                        <p className="text-sm text-corporate-gray-600 dark:text-corporate-gray-400">{absence.start_date.slice(0, 10)} - {absence.end_date.slice(0, 10)}</p>
                       </div>
                       <Badge variant="outline">{absence.type}</Badge>
                     </div>

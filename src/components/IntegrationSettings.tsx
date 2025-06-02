@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface IntegrationStatus {
   connected: boolean;
@@ -16,27 +18,21 @@ interface IntegrationStatus {
 }
 
 const IntegrationSettings = () => {
-  // État des intégrations
-  const slackStatus: IntegrationStatus = {
-    connected: true,
-    lastSync: "Il y a 5 minutes",
-    notifications: [
-      { type: "Demandes de congés", enabled: true },
-      { type: "Validations", enabled: true },
-      { type: "Absences planifiées", enabled: true },
-      { type: "Alertes sous-effectif", enabled: false }
-    ]
-  };
+  const [slackStatus, setSlackStatus] = useState<any>(null);
+  const [teamsStatus, setTeamsStatus] = useState<any>(null);
 
-  const teamsStatus: IntegrationStatus = {
-    connected: true,
-    lastSync: "Il y a 2 minutes",
-    notifications: [
-      { type: "Statut automatique", enabled: true },
-      { type: "Notifications de présence", enabled: true },
-      { type: "Alertes équipe", enabled: true }
-    ]
-  };
+  useEffect(() => {
+    const fetchSlackStatus = async () => {
+      const { data, error } = await supabase.from('integration_statuses').select('*').eq('name', 'slack').single();
+      if (!error && data) setSlackStatus(data);
+    };
+    const fetchTeamsStatus = async () => {
+      const { data, error } = await supabase.from('integration_statuses').select('*').eq('name', 'teams').single();
+      if (!error && data) setTeamsStatus(data);
+    };
+    fetchSlackStatus();
+    fetchTeamsStatus();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -49,8 +45,8 @@ const IntegrationSettings = () => {
                 <Slack className="h-6 w-6 text-[#4A154B]" />
                 <span>Slack</span>
               </div>
-              <Badge variant={slackStatus.connected ? "default" : "destructive"}>
-                {slackStatus.connected ? "Connecté" : "Déconnecté"}
+              <Badge variant={slackStatus?.connected ? "default" : "destructive"}>
+                {slackStatus?.connected ? "Connecté" : "Déconnecté"}
               </Badge>
             </CardTitle>
           </CardHeader>
@@ -60,7 +56,7 @@ const IntegrationSettings = () => {
                 Dernière synchronisation
               </span>
               <span className="text-corporate-gray-900 dark:text-white">
-                {slackStatus.lastSync}
+                {slackStatus?.lastSync}
               </span>
             </div>
 
@@ -99,7 +95,7 @@ const IntegrationSettings = () => {
                 Notifications
               </h4>
               <div className="space-y-3">
-                {slackStatus.notifications.map((notification, index) => (
+                {slackStatus?.notifications.map((notification, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <Label htmlFor={`slack-notif-${index}`} className="text-corporate-gray-900 dark:text-white">
                       {notification.type}
@@ -129,8 +125,8 @@ const IntegrationSettings = () => {
                 <MessageSquare className="h-6 w-6 text-[#5059C9]" />
                 <span>Microsoft Teams</span>
               </div>
-              <Badge variant={teamsStatus.connected ? "default" : "destructive"}>
-                {teamsStatus.connected ? "Connecté" : "Déconnecté"}
+              <Badge variant={teamsStatus?.connected ? "default" : "destructive"}>
+                {teamsStatus?.connected ? "Connecté" : "Déconnecté"}
               </Badge>
             </CardTitle>
           </CardHeader>
@@ -140,7 +136,7 @@ const IntegrationSettings = () => {
                 Dernière synchronisation
               </span>
               <span className="text-corporate-gray-900 dark:text-white">
-                {teamsStatus.lastSync}
+                {teamsStatus?.lastSync}
               </span>
             </div>
 
@@ -179,7 +175,7 @@ const IntegrationSettings = () => {
                 Notifications
               </h4>
               <div className="space-y-3">
-                {teamsStatus.notifications.map((notification, index) => (
+                {teamsStatus?.notifications.map((notification, index) => (
                   <div key={index} className="flex items-center justify-between">
                     <Label htmlFor={`teams-notif-${index}`} className="text-corporate-gray-900 dark:text-white">
                       {notification.type}

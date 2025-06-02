@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface TeamMember {
   id: string;
@@ -37,57 +38,20 @@ interface ExchangeProposal {
 
 const TeamPlanningView = () => {
   const [activeTab, setActiveTab] = useState("planning");
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [exchangeProposals, setExchangeProposals] = useState<any[]>([]);
 
-  // Données de l'équipe
-  const teamMembers: TeamMember[] = [
-    {
-      id: "1",
-      name: "Marie Martin",
-      avatar: "/placeholder.svg",
-      initials: "MM",
-      role: "Développeuse",
-      absences: [
-        {
-          id: "a1",
-          startDate: "2024-12-20",
-          endDate: "2024-12-24",
-          type: "CP",
-          status: "approved",
-          reason: "Vacances de Noël"
-        }
-      ]
-    },
-    {
-      id: "2",
-      name: "Jean Dupont",
-      avatar: "/placeholder.svg",
-      initials: "JD",
-      role: "Designer",
-      absences: [
-        {
-          id: "a2",
-          startDate: "2024-12-22",
-          endDate: "2024-12-31",
-          type: "CP",
-          status: "approved",
-          reason: "Famille"
-        }
-      ]
-    }
-  ];
-
-  // Propositions d'échange
-  const exchangeProposals: ExchangeProposal[] = [
-    {
-      id: "e1",
-      from: teamMembers[0],
-      to: teamMembers[1],
-      dates: "15-16 Janvier 2025",
-      type: "CP",
-      status: "pending",
-      reason: "Urgence familiale"
-    }
-  ];
+  useEffect(() => {
+    const fetchTeamMembers = async () => {
+      // Exemple : charger tous les profils et leurs absences
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*, absences(*)');
+      if (!error && profiles) setTeamMembers(profiles);
+    };
+    fetchTeamMembers();
+    // À compléter pour exchangeProposals si vous avez une table dédiée
+  }, []);
 
   return (
     <div className="space-y-8">

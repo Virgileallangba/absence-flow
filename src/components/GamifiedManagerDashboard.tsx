@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface TeamWellbeingScore {
   score: number;
@@ -32,51 +34,31 @@ interface ManagerRanking {
 }
 
 const GamifiedManagerDashboard = () => {
-  // Données de bien-être de l'équipe
-  const teamWellbeing: TeamWellbeingScore = {
-    score: 85,
-    trend: 12,
-    factors: [
-      { name: "Répartition des congés", value: 90, max: 100 },
-      { name: "Équilibre charge de travail", value: 85, max: 100 },
-      { name: "Satisfaction équipe", value: 80, max: 100 },
-    ]
-  };
+  const [teamWellbeing, setTeamWellbeing] = useState<any>(null);
+  const [badges, setBadges] = useState<any[]>([]);
+  const [rankings, setRankings] = useState<any[]>([]);
 
-  // Badges disponibles
-  const badges: ManagerBadge[] = [
-    {
-      id: "manager-of-year",
-      name: "Manager de l'année",
-      description: "Meilleure gestion des congés de l'année",
-      icon: Trophy,
-      progress: 75,
-      unlocked: false
-    },
-    {
-      id: "zen-team",
-      name: "Équipe zen",
-      description: "Équipe avec le meilleur équilibre vie pro/perso",
-      icon: Star,
-      progress: 90,
-      unlocked: true
-    },
-    {
-      id: "efficiency-master",
-      name: "Maître de l'efficacité",
-      description: "Validation rapide des demandes",
-      icon: TrendingUp,
-      progress: 60,
-      unlocked: false
-    }
-  ];
-
-  // Classement des managers
-  const rankings: ManagerRanking[] = [
-    { rank: 1, name: "Marie Martin", score: 92, avatar: "/placeholder.svg", initials: "MM" },
-    { rank: 2, name: "Jean Dupont", score: 88, avatar: "/placeholder.svg", initials: "JD" },
-    { rank: 3, name: "Sophie Leroy", score: 85, avatar: "/placeholder.svg", initials: "SL" },
-  ];
+  useEffect(() => {
+    // Charger le bien-être de l'équipe
+    const fetchWellbeing = async () => {
+      // À adapter selon votre structure Supabase
+      const { data, error } = await supabase.from('team_wellbeing').select('*').single();
+      if (!error && data) setTeamWellbeing(data);
+    };
+    // Charger les badges
+    const fetchBadges = async () => {
+      const { data, error } = await supabase.from('manager_badges').select('*');
+      if (!error && data) setBadges(data);
+    };
+    // Charger le classement
+    const fetchRankings = async () => {
+      const { data, error } = await supabase.from('manager_rankings').select('*');
+      if (!error && data) setRankings(data);
+    };
+    fetchWellbeing();
+    fetchBadges();
+    fetchRankings();
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -89,7 +71,7 @@ const GamifiedManagerDashboard = () => {
               <span>Score de bien-être équipe</span>
             </div>
             <Badge className="bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100">
-              +{teamWellbeing.trend}% ce mois
+              +{teamWellbeing?.trend}% ce mois
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -97,14 +79,14 @@ const GamifiedManagerDashboard = () => {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="text-4xl font-bold text-green-900 dark:text-green-100">
-                {teamWellbeing.score}%
+                {teamWellbeing?.score}%
               </div>
               <div className="text-sm text-green-700 dark:text-green-300">
                 Score global
               </div>
             </div>
             <div className="space-y-4">
-              {teamWellbeing.factors.map((factor, index) => (
+              {teamWellbeing?.factors.map((factor, index) => (
                 <div key={index} className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-green-800 dark:text-green-200">{factor.name}</span>

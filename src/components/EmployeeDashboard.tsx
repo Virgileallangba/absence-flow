@@ -8,6 +8,7 @@ import { absenceService } from "@/services/absenceService";
 import { authService } from "@/services/authService";
 import { useToast } from "@/components/ui/use-toast";
 import type { Absence } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 
 interface EmployeeDashboardProps {
   onNewRequest: () => void;
@@ -17,6 +18,7 @@ const EmployeeDashboard = ({ onNewRequest }: EmployeeDashboardProps) => {
   const { toast } = useToast();
   const [absences, setAbsences] = useState<Absence[]>([]);
   const [loading, setLoading] = useState(true);
+  const [leaveBalances, setLeaveBalances] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchAbsences = async () => {
@@ -37,14 +39,24 @@ const EmployeeDashboard = ({ onNewRequest }: EmployeeDashboardProps) => {
       }
     };
 
-    fetchAbsences();
-  }, [toast]);
+    const fetchBalances = async () => {
+      try {
+        const session = await authService.getCurrentSession();
+        if (session?.user) {
+          const { data, error } = await supabase
+            .from('leave_balances')
+            .select('*')
+            .eq('employee_id', session.user.id);
+          if (!error && data) setLeaveBalances(data);
+        }
+      } catch (e) {
+        // Optionnel : afficher une erreur
+      }
+    };
 
-  const leaveBalances = [
-    { type: "Congés payés", used: 18, total: 25, color: "bg-corporate-blue-500", urgent: false },
-    { type: "RTT", used: 3, total: 8, color: "bg-corporate-green-500", urgent: false },
-    { type: "Récupération", used: 2, total: 4, color: "bg-corporate-orange-500", urgent: true },
-  ];
+    fetchAbsences();
+    fetchBalances();
+  }, [toast]);
 
   const formatAbsenceForHistory = (absence: Absence) => {
     const startDate = new Date(absence.start_date);

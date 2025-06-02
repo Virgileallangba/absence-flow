@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface ComplianceCheck {
   id: string;
@@ -36,66 +37,21 @@ interface RequiredRegister {
 
 const ComplianceDashboard = () => {
   const [activeTab, setActiveTab] = useState("overview");
+  const [complianceChecks, setComplianceChecks] = useState<any[]>([]);
+  const [auditSimulations, setAuditSimulations] = useState<any[]>([]);
 
-  // Vérifications de conformité
-  const complianceChecks: ComplianceCheck[] = [
-    {
-      id: "c1",
-      category: "Registre des congés",
-      status: "compliant",
-      description: "Registre à jour avec toutes les informations requises",
-      requirement: "Article L3141-1 du Code du travail",
-      evidence: "Registre des congés 2024.pdf"
-    },
-    {
-      id: "c2",
-      category: "Consentement RGPD",
-      status: "warning",
-      description: "Mise à jour nécessaire des mentions de consentement",
-      requirement: "Article 7 du RGPD",
-      evidence: "Formulaire de consentement.docx"
-    },
-    {
-      id: "c3",
-      category: "Registre des accidents",
-      status: "non-compliant",
-      description: "Registre manquant pour le trimestre en cours",
-      requirement: "Article L441-2 du Code de la sécurité sociale",
-      evidence: "À compléter"
-    }
-  ];
-
-  // Simulations d'audit
-  const auditSimulations: AuditSimulation[] = [
-    {
-      id: "a1",
-      title: "Contrôle Inspection du Travail",
-      status: "passed",
-      date: "15/12/2024",
-      findings: [
-        {
-          type: "success",
-          description: "Registre des congés conforme"
-        },
-        {
-          type: "warning",
-          description: "Délais de réponse à améliorer"
-        }
-      ]
-    },
-    {
-      id: "a2",
-      title: "Audit RGPD",
-      status: "in-progress",
-      date: "En cours",
-      findings: [
-        {
-          type: "error",
-          description: "Mentions légales à mettre à jour"
-        }
-      ]
-    }
-  ];
+  useEffect(() => {
+    const fetchComplianceChecks = async () => {
+      const { data, error } = await supabase.from('compliance_checks').select('*');
+      if (!error && data) setComplianceChecks(data);
+    };
+    const fetchAuditSimulations = async () => {
+      const { data, error } = await supabase.from('audit_simulations').select('*');
+      if (!error && data) setAuditSimulations(data);
+    };
+    fetchComplianceChecks();
+    fetchAuditSimulations();
+  }, []);
 
   // Registres obligatoires
   const requiredRegisters: RequiredRegister[] = [

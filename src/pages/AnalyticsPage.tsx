@@ -18,6 +18,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { supabase } from "@/lib/supabase";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
@@ -46,36 +47,32 @@ const AnalyticsPage = () => {
             console.log("AnalyticsPage: Profile loaded.", userProfile);
             setProfile(userProfile);
 
-            // Simuler des données pour la démo
-            // Dans une vraie application, ces données viendraient de l'API
-            const mockData = {
-              totalAbsences: 156,
-              pendingRequests: 12,
-              approvedRequests: 134,
-              rejectedRequests: 10,
-              monthlyData: [
-                { month: "Jan", absences: 15 },
-                { month: "Fév", absences: 12 },
-                { month: "Mar", absences: 18 },
-                { month: "Avr", absences: 14 },
-                { month: "Mai", absences: 16 },
-                { month: "Jun", absences: 13 },
-              ],
-              departmentData: [
-                { name: "IT", value: 45 },
-                { name: "RH", value: 30 },
-                { name: "Marketing", value: 25 },
-                { name: "Finance", value: 20 },
-              ],
-              typeData: [
-                { name: "Congés", value: 80 },
-                { name: "Maladie", value: 40 },
-                { name: "Formation", value: 20 },
-                { name: "Autre", value: 16 },
-              ],
-            };
-
-            setStats(mockData);
+            // Charger les vraies données depuis Supabase
+            const { data: absences, error } = await supabase
+              .from('absences')
+              .select('*')
+              .eq('employee_id', session.user.id);
+            if (!error && absences) {
+              // Calculs dynamiques
+              const totalAbsences = absences.length;
+              const pendingRequests = absences.filter(a => a.status === 'pending').length;
+              const approvedRequests = absences.filter(a => a.status === 'approved').length;
+              const rejectedRequests = absences.filter(a => a.status === 'rejected').length;
+              // Exemple de monthlyData
+              const monthlyData = Array.from({length: 12}, (_, i) => ({
+                month: new Date(0, i).toLocaleString('fr-FR', { month: 'short' }),
+                absences: absences.filter(a => new Date(a.start_date).getMonth() === i).length
+              }));
+              setStats({
+                totalAbsences,
+                pendingRequests,
+                approvedRequests,
+                rejectedRequests,
+                monthlyData,
+                departmentData: [], // À compléter selon votre structure
+                typeData: [] // À compléter selon votre structure
+              });
+            }
           }
         } else {
           console.log("AnalyticsPage: No active session found.");

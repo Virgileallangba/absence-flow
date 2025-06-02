@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 interface PolicyAudit {
   id: string;
@@ -33,67 +34,27 @@ interface ChatMessage {
 const HRConsultant = () => {
   const [activeTab, setActiveTab] = useState("audit");
   const [chatInput, setChatInput] = useState("");
-  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content: "Bonjour ! Je suis votre consultant RH virtuel. Comment puis-je vous aider aujourd'hui ?",
-      timestamp: new Date().toISOString()
-    }
-  ]);
+  const [policyAudits, setPolicyAudits] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
 
-  // Audit de politique
-  const policyAudits: PolicyAudit[] = [
-    {
-      id: "a1",
-      title: "Délai de prévenance des congés",
-      status: "warning",
-      description: "Le délai de 2 semaines est inférieur au minimum légal de 1 mois",
-      recommendation: "Augmenter le délai minimum à 1 mois pour les congés principaux"
-    },
-    {
-      id: "a2",
-      title: "Fractionnement des congés",
-      status: "compliant",
-      description: "La politique respecte les obligations de fractionnement",
-      recommendation: "Maintenir la politique actuelle"
-    },
-    {
-      id: "a3",
-      title: "Congés pour événements familiaux",
-      status: "non-compliant",
-      description: "Absence de dispositions pour les événements familiaux",
-      recommendation: "Ajouter des jours spécifiques pour mariage, naissance, etc."
-    }
-  ];
-
-  // Recommandations RH
-  const recommendations: HRRecommendation[] = [
-    {
-      id: "r1",
-      type: "employee",
-      title: "Flexibilité pour Julie Martin",
-      description: "Julie a un taux de satisfaction de 85% mais pourrait bénéficier de plus de télétravail",
-      impact: "high",
-      priority: 1
-    },
-    {
-      id: "r2",
-      type: "team",
-      title: "Équilibre des congés d'été",
-      description: "L'équipe marketing est sous-effectif pendant les périodes estivales",
-      impact: "medium",
-      priority: 2
-    },
-    {
-      id: "r3",
-      type: "policy",
-      title: "Mise en place du forfait jours",
-      description: "Votre structure pourrait bénéficier du forfait jours pour plus de flexibilité",
-      impact: "high",
-      priority: 1
-    }
-  ];
+  useEffect(() => {
+    const fetchAudits = async () => {
+      const { data, error } = await supabase.from('hr_audits').select('*');
+      if (!error && data) setPolicyAudits(data);
+    };
+    const fetchRecommendations = async () => {
+      const { data, error } = await supabase.from('hr_recommendations').select('*');
+      if (!error && data) setRecommendations(data);
+    };
+    const fetchMessages = async () => {
+      const { data, error } = await supabase.from('hr_messages').select('*');
+      if (!error && data) setChatMessages(data);
+    };
+    fetchAudits();
+    fetchRecommendations();
+    fetchMessages();
+  }, []);
 
   const handleSendMessage = () => {
     if (!chatInput.trim()) return;
