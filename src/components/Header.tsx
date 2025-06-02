@@ -8,6 +8,7 @@ import { authService } from "@/services/authService";
 import { useToast } from "@/components/ui/use-toast";
 import { useEffect, useState } from "react";
 import type { Employee } from "@/lib/supabase";
+import NotificationBell from "@/components/NotificationBell";
 
 interface HeaderProps {
   activeRole: "employee" | "manager";
@@ -104,12 +105,7 @@ const Header = ({
             </Button>
           )}
 
-          <Button variant="ghost" size="icon" className="relative text-corporate-gray-600 dark:text-corporate-gray-300 hover:text-corporate-gray-900 dark:hover:text-white transition-colors duration-300">
-            <Bell className="h-5 w-5" />
-            <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
-              3
-            </Badge>
-          </Button>
+          <NotificationBell userId={user?.id} />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
