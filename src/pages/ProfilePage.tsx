@@ -7,7 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import type { Database } from "@/lib/supabase";
 import type { Employee } from "@/lib/supabase";
+import AvatarUploader from "@/components/AvatarUploader";
+
+type EmployeeRow = Database['public']['Tables']['employees']['Row'];
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -61,11 +65,24 @@ const ProfilePage = () => {
     }
   };
 
+  const handleAvatarUpdate = (newUrl: string) => {
+    if (profile) {
+      const updatedProfile: Employee = {
+        ...profile,
+        avatar_url: newUrl,
+        enable_email_notifications: profile.enable_email_notifications ?? true,
+        enable_in_app_notifications: profile.enable_in_app_notifications ?? true,
+        preferred_theme: profile.preferred_theme ?? "system"
+      };
+      setProfile(updatedProfile);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-corporate-gray-900">
         <Header
-          activeRole={profile?.role || "employee"}
+          activeRole={(profile?.role as "employee" | "manager") || "employee"}
           onRoleChange={() => {}}
           onNewRequest={() => {}}
         />
@@ -82,7 +99,7 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-corporate-gray-900">
       <Header
-        activeRole={profile?.role || "employee"}
+        activeRole={(profile?.role as "employee" | "manager") || "employee"}
         onRoleChange={() => {}}
         onNewRequest={() => {}}
       />
@@ -96,7 +113,18 @@ const ProfilePage = () => {
           <CardHeader>
             <CardTitle>Informations personnelles</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
+            {profile && (
+              <div className="flex justify-center mb-6">
+                <AvatarUploader
+                  userId={profile.id}
+                  currentAvatarUrl={profile.avatar_url ?? null}
+                  fullName={profile.full_name}
+                  onAvatarUpdate={handleAvatarUpdate}
+                />
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName">Nom complet</Label>
